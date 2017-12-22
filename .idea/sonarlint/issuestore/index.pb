@@ -1,0 +1,27 @@
+
+V
+&src/vmtranslator/commands/Command.java,f/e/fed4617612418eb79e1d18c7ce22237c780d3167
+Q
+!src/vmtranslator/utils/Utils.java,8/b/8bbcc2997fb56d81ad7d52b4a39207375331b739
+`
+0src/vmtranslator/enums/VirtualMemorySegment.java,d/c/dcbb0c3242785e33a4190dbf75ca1b6b827f51c5
+[
++src/vmtranslator/codewriter/CodeWriter.java,d/8/d8b319732e8927fe88d5c7cbf04e9287d9533d20
+b
+2src/vmtranslator/commands/MemoryAccessCommand.java,8/5/85dd94a41d78e7d6db70ca13089c17fc1d4f7597
+9
+	input.asm,4/7/475c2e6df6d7a294404153c6d29ce1533eb3206b
+S
+#src/vmtranslator/parser/Parser.java,c/5/c5ef66aa853229285cc0faef4381c1dd892a6a23
+8
+input.vm,8/5/85f480d2d6064b4c38ae21c7b3b51204108a85e5
+J
+src/vmtranslator/Main.java,6/5/658d973f202c65d38af596fa5f2e507e76c1f26d
+a
+1src/vmtranslator/enums/MemoryAccessOperation.java,e/7/e7638bd06cbb133e1eef7d1546a6f589c4c64366
+W
+'src/vmtranslator/enums/CommandType.java,c/8/c80a6f07db543c95cba9ef78170a04f42e0f146f
+k
+;src/vmtranslator/commands/ArithematicAndLogicalCommand.java,5/1/51e422a299f617ed3186bc4517b32713eb01c84e
+k
+;src/vmtranslator/enums/ArithmeticAndLogicalCommandType.java,4/f/4f395976c254e7c9e2d80af7ec057dc57e9f0cff

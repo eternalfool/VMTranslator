@@ -1,0 +1,15 @@
+
+hsquid:S1192"GDefine a constant instead of duplicating this literal "A = M" 12 times.(Ÿ¥‚¡ÿÿÿÿÿ8ÁñÿÒ†,
+gsquid:S1192"FDefine a constant instead of duplicating this literal "@TEMP" 4 times.(ÈÙÖŸÿÿÿÿÿ8´É ò†,
+csquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(¯¯–8ÌÀûÈ†,
+_squid:UnusedPrivateMethod"0Remove this unused private "decrementSP" method.(…Ùó°üÿÿÿÿ8õ¡ëğ†,
+csquid:S1192"HDefine a constant instead of duplicating this literal "M = M-1" 5 times.(Ò¨™M8¥É¿Ö†,
+bsquid:S1192"GDefine a constant instead of duplicating this literal "D = M" 11 times.(ı±¨a8íÈÛÒ†,
+§%squid:RedundantThrowsDeclarationCheck"lRemove the declaration of thrown exception 'java.io.IOException', as it cannot be thrown from method's body.(æÔ«÷şÿÿÿÿ8û€ğÒ†,
+hsquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(…ÙóŸıÿÿÿÿ8ß›É†,
+hsquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(‚¸ˆ•şÿÿÿÿ8û€ğÒ†,
+bsquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(áóÓ8û€ğÒ†,
+gsquid:CommentedOutCodeLine"<This block of commented-out lines of code should be removed.(î’šÀ8¶¯‡î†,
+hsquid:S00112"FDefine and throw a dedicated exception instead of using a generic one.(‚¸ˆ•şÿÿÿÿ8û€ğÒ†,
+asquid:S1192"FDefine a constant instead of duplicating this literal "M = D" 8 times.(ÅÛé.8ŸÑßÒ†,
+esquid:S1192"JDefine a constant instead of duplicating this literal "M = M - 1" 4 times.(Ò¨™M8õ” ò†,

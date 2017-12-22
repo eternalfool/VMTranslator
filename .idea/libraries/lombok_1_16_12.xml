@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="lombok-1.16.12">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../gitblit/VNF_Catalog_Release_Version_Manager/rtJIO_VNF_Catalog_Release_Manager/lib/lombok-1.16.12.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
