@@ -1,9 +1,7 @@
 package vmtranslator.parser;
 
-import vmtranslator.commands.ArithematicAndLogicalCommand;
-import vmtranslator.commands.Command;
+import vmtranslator.commands.*;
 import vmtranslator.enums.CommandType;
-import vmtranslator.commands.MemoryAccessCommand;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,16 +27,36 @@ public class Parser {
     }
 
     private Command parseAsCommand(String command) {
+        // Ignore comments
+        if (command.contains("//")) {
+            command = command.substring(0, command.indexOf("//"));
+        }
         if (command.split("\\s").length == 1) {
-            return new ArithematicAndLogicalCommand(command);
+            if (command.equalsIgnoreCase("return")){
+                return new ReturnCommand(command);
+            }
+            return new ArithmeticAndLogicalCommand(command);
         }
         if (command.split("\\s").length == 2) {
-            return new ArithematicAndLogicalCommand(command);
+            String operation = command.split("\\s")[0];
+            if (operation.equalsIgnoreCase("label")) {
+                return new LabelCommand(command);
+            } else if (operation.equalsIgnoreCase("if-goto")) {
+                return new IfGotoCommand(command);
+            } else if (operation.equalsIgnoreCase("goto")) {
+                return new GotoCommand(command);
+            }
         }
         if (command.split("\\s").length == 3) {
+            String operation = command.split("\\s")[0];
+            if(operation.equalsIgnoreCase("function")){
+                return new FunctionCommand(command);
+            }
+            if(operation.equalsIgnoreCase("push") || operation.equalsIgnoreCase("pop")){
             return new MemoryAccessCommand(command);
+            }
         }
-        throw new RuntimeException("Invalid command");
+        throw new RuntimeException("Invalid command " + command);
     }
 
     public boolean hasMoreCommands() {

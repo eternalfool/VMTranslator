@@ -1,9 +1,6 @@
 package vmtranslator.codewriter;
 
-import vmtranslator.commands.ArithematicAndLogicalCommand;
-import vmtranslator.commands.Command;
-import vmtranslator.commands.MemoryAccessCommand;
-import vmtranslator.enums.CommandType;
+import vmtranslator.commands.*;
 import vmtranslator.enums.MemoryAccessOperation;
 import vmtranslator.enums.VirtualMemorySegment;
 import vmtranslator.utils.Utils;
@@ -15,18 +12,22 @@ import static vmtranslator.enums.VirtualMemorySegment.THIS;
 
 public class CodeWriter {
 
-    PrintStream printStream = null;
-    String fileName;
-    int count;
+    private PrintStream printStream = null;
+    private String fileName;
+    private int count;
 
     public CodeWriter(String fileName) throws FileNotFoundException {
+        setFileName(fileName);
+    }
+
+    public void setFileName(String fileName) throws FileNotFoundException {
         File outputFile = new File(fileName);
         this.fileName = Utils.generateOutputFileNameWithoutExtension(fileName);
         OutputStream os = new FileOutputStream(outputFile);
         printStream = new PrintStream(os);
     }
 
-    public void writeArithmetic(ArithematicAndLogicalCommand arithematicAndLogicalCommand) {
+    private void writeArithmetic(ArithmeticAndLogicalCommand arithematicAndLogicalCommand) {
         switch (arithematicAndLogicalCommand.getArithmeticAndLogicalCommandType()) {
             case EQ:
                 popTwoValuesFromStack();
@@ -114,7 +115,7 @@ public class CodeWriter {
                 incrementSP();
                 break;
             default:
-//                throw new RuntimeException("No such arithmetic command: " + arithematicAndLogicalCommand.toString());
+                throw new RuntimeException("No such arithmetic command: " + arithematicAndLogicalCommand.toString());
         }
 
     }
@@ -129,27 +130,204 @@ public class CodeWriter {
         p("A = M");
     }
 
-    private void decrementSP() {
-        printStream.println("@SP");
-        printStream.println("M = M-1");
+    public void writeInit() {
+
     }
 
     private void incrementSP() {
-        printStream.println("@SP");
-        printStream.println("M = M+1");
+        p("@SP");
+        p("M = M+1");
     }
 
     void p(String string) {
         printStream.println(string);
     }
 
-    public void writePushPop(MemoryAccessCommand memoryAccessCommand) {
+    private void writePushPop(MemoryAccessCommand memoryAccessCommand) {
         if (memoryAccessCommand.getMemoryAccessOperation().equals(MemoryAccessOperation.PUSH)) {
             pushMemorySegmentOperation(memoryAccessCommand);
             incrementAndStoreInStackPointer();
         } else if (memoryAccessCommand.getMemoryAccessOperation().equals(MemoryAccessOperation.POP)) {
             popMemorySegmentOperation(memoryAccessCommand);
         }
+    }
+
+    private void writeGoto(GotoCommand command) {
+        p("@" + command.getLabelName());
+        p("0;JMP");
+    }
+
+    private void writeLabel(LabelCommand command) {
+        p("(" + command.getLabelName() + ")");
+    }
+
+    private void writeIf(IfGotoCommand command) {
+        p("@SP");
+        p("M = M - 1");
+        p("A = M");
+        p("D = M");
+        p("@" + command.getLabelName());
+        p("D;JNE");
+    }
+
+    private void writeFunction(FunctionCommand command) {
+        p("(" + command.getClassMethodName() + ")");
+        // initialize local variables
+        // nvar times 0
+        p("@" + command.getNvars());
+        p("D = A");
+        p("@NVAR" + count);
+        p("M = D");
+        p("(PUSHING-NVAR" + count + ")");
+        p("@NVAR" + count);
+        p("D = M");
+        p("@END-PUSH-NVAR" + count);
+        p("D;JEQ");
+        writePushPop(new MemoryAccessCommand("push constant 0"));
+        p("@NVAR" + count);
+        p("M = M-1");
+        p("@PUSHING-NVAR" + count);
+        p("0;JMP");
+        p("(END-PUSH-NVAR" + count + ")");
+
+    }
+
+    private void writeCall(CallCommand command) {
+
+    }
+
+    private void writeReturn(ReturnCommand command) {
+        // moves return value to the caller
+        // reinstates caller state
+        // goto Foo.ret.1
+
+        // push return value <--- already done?
+
+        // endframe = LCL
+        p("@LCL");
+        p("A = M");
+        p("D = A");
+        p("@ENDFRAME" + count);
+        p("M = D");
+
+        // retAddress = *(endFrame - 5)
+        p("@ENDFRAME" + count);
+        p("D = M");
+        storeDAtTopOfStackAndIncrementSP();
+        writePushPop(new MemoryAccessCommand("push constant 5"));
+        writeArithmetic(new ArithmeticAndLogicalCommand("sub"));
+        popTopElementIntoD();
+        p("A = D");
+        p("D = M");
+        p("@RET_ADDR" + count);
+        p("M = D");
+
+        // SP = ARG + 1 (just save arg)
+        p("@ARG");
+        p("D = M");
+        p("@OLD_ARG");
+        p("M = D");
+//        storeDAtTopOfStackAndIncrementSP();
+
+        // ARG[0] = pop()
+//        storeDAtTopOfStackAndIncrementSP();
+        p("@ARG");
+        p("M = D");
+
+        // THAT = *(endframe - 1)
+        p("@ENDFRAME" + count);
+        p("D = M");
+        storeDAtTopOfStackAndIncrementSP();
+        writePushPop(new MemoryAccessCommand("push constant 1"));
+        writeArithmetic(new ArithmeticAndLogicalCommand("sub"));
+//        storeTopElementInDAndIncrementSP();
+        popTopElementIntoD();
+
+        p("A = D");
+        p("D = M");
+        p("@THAT");
+        p("M = D");
+
+        // THIS = *(endframe - 2)
+        p("@ENDFRAME" + count);
+        p("D = M");
+        storeDAtTopOfStackAndIncrementSP();
+        writePushPop(new MemoryAccessCommand("push constant 2"));
+        writeArithmetic(new ArithmeticAndLogicalCommand("sub"));
+//        storeTopElementInDAndIncrementSP();
+        popTopElementIntoD();
+
+        p("A = D");
+        p("D = M");
+        p("@THIS");
+        p("M = D");
+
+
+        // ARG = *(endframe - 3)
+        p("@ENDFRAME" + count);
+        p("D = M");
+        storeDAtTopOfStackAndIncrementSP();
+        writePushPop(new MemoryAccessCommand("push constant 3"));
+        writeArithmetic(new ArithmeticAndLogicalCommand("sub"));
+//        storeTopElementInDAndIncrementSP();
+        popTopElementIntoD();
+
+        p("A = D");
+        p("D = M");
+        p("@ARG");
+        p("M = D");
+
+
+        // LCL = *(endframe - 4)
+        p("@ENDFRAME" + count);
+        p("D = M");
+        storeDAtTopOfStackAndIncrementSP();
+        writePushPop(new MemoryAccessCommand("push constant 4"));
+        writeArithmetic(new ArithmeticAndLogicalCommand("sub"));
+//        storeTopElementInDAndIncrementSP();
+        popTopElementIntoD();
+
+        p("A = D");
+        p("D = M");
+        p("@LCL");
+        p("M = D");
+
+        // SP = ARG + 1
+//        storeTopElementInDAndIncrementSP();
+        popTopElementIntoD();
+        p("@OLD_ARG");
+        p("A = M");
+        p("M = D");
+        p("D = A + 1");
+        p("@SP");
+        p("M = D");
+
+        p("@RET_ADDR" + count);
+        p("A = M");
+        p("0;JMP");
+//        writeGoto(new GotoCommand("goto RET_ADDR" + count));
+    }
+
+    private void popTopElementIntoD() {
+        p("@SP");
+        p("M = M-1");
+        p("A = M");
+        p("D = M");
+    }
+
+    private void storeTopElementInDAndIncrementSP() {
+        p("@SP");
+        p("M = M-1");
+        p("A = M");
+        p("D = M");
+        incrementSP();
+    }
+
+    private void storeDAtTopOfStackAndIncrementSP() {
+        p("@SP");
+        p("A = M");
+        p("M = D");
+        incrementSP();
     }
 
     private void popMemorySegmentOperation(MemoryAccessCommand memoryAccessCommand) {
@@ -272,15 +450,33 @@ public class CodeWriter {
     public void writeCommand(Command command) {
         count++;
         printStream.println("// " + command.toString());
-        if (command.commandType().equals(CommandType.C_ARITHMETIC)) {
-            writeArithmetic((ArithematicAndLogicalCommand) command);
-            return;
-        } else if (command.commandType().equals(CommandType.C_POP) || command.commandType().equals(CommandType
-                .C_PUSH)) {
-            writePushPop((MemoryAccessCommand) command);
-            return;
+        switch (command.commandType()) {
+            case C_ARITHMETIC:
+                writeArithmetic((ArithmeticAndLogicalCommand) command);
+                break;
+            case C_PUSH:
+            case C_POP:
+                writePushPop((MemoryAccessCommand) command);
+                break;
+            case C_LABEL:
+                writeLabel((LabelCommand) command);
+                break;
+            case C_GOTO:
+                writeGoto((GotoCommand) command);
+                break;
+            case C_IF:
+                writeIf((IfGotoCommand) command);
+                break;
+            case C_FUNCTION:
+                writeFunction((FunctionCommand) command);
+                break;
+            case C_RETURN:
+                writeReturn((ReturnCommand) command);
+                break;
+            case C_CALL:
+                writeCall((CallCommand) command);
+                break;
         }
-        throw new RuntimeException("Invalid commandType " + command.commandType().name());
 
     }
 
@@ -288,8 +484,12 @@ public class CodeWriter {
         printStream.close();
     }
 
-    public void endProgram() {
-        p("@SP");
-        p("M = M+1");
+    public static void main(String[] args) {
+        String command = "pop local 0         // initializes sum = 0";
+        if (command.contains("//")) {
+            command = command.substring(0, command.indexOf("//"));
+        }
+        System.out.println(command);
+
     }
 }

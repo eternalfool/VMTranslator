@@ -11,13 +11,6 @@ public class MemoryAccessCommand implements Command {
     VirtualMemorySegment virtualMemorySegment;
     int index;
 
-    public MemoryAccessCommand(MemoryAccessOperation memoryAccessOperation, VirtualMemorySegment
-            virtualMemorySegments, int index) {
-        this.memoryAccessOperation = memoryAccessOperation;
-        this.virtualMemorySegment = virtualMemorySegments;
-        this.index = index;
-    }
-
     public MemoryAccessCommand(String command) {
         String memoryAccess = command.split("\\s")[0];
         String virtualSegment = command.split("\\s")[1];

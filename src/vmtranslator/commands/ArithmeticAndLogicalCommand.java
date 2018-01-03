@@ -5,14 +5,15 @@ import vmtranslator.enums.ArithmeticAndLogicalCommandType;
 import vmtranslator.enums.CommandType;
 
 @Data
-public class ArithematicAndLogicalCommand implements Command {
+public class ArithmeticAndLogicalCommand implements Command {
     ArithmeticAndLogicalCommandType arithmeticAndLogicalCommandType;
 
-    public ArithematicAndLogicalCommand(ArithmeticAndLogicalCommandType arithmeticAndLogicalCommandType) {
+    public ArithmeticAndLogicalCommand(ArithmeticAndLogicalCommandType arithmeticAndLogicalCommandType) {
         this.arithmeticAndLogicalCommandType = arithmeticAndLogicalCommandType;
     }
 
-    public ArithematicAndLogicalCommand(String command) {
+    public ArithmeticAndLogicalCommand(String command) {
+//        System.out.println(command);
         this.arithmeticAndLogicalCommandType = ArithmeticAndLogicalCommandType.get(command);
 
     }

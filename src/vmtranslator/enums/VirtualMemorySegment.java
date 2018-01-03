@@ -22,10 +22,6 @@ public enum VirtualMemorySegment {
     private String virtualMemorySegment;
     private String assemblyCode;
 
-/*    VirtualMemorySegment(String virtualMemorySegment) {
-        this.virtualMemorySegment = virtualMemorySegment;
-    }*/
-
     private static final Map<String, VirtualMemorySegment> lookup = new HashMap<>();
 
     static {
